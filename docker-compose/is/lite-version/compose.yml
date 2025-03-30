@@ -1,0 +1,29 @@
+version: "3"
+
+networks:
+    wso2_network:
+        driver: bridge
+
+services:
+    identity-server:
+        image: wso2/wso2is:7.0.0
+        ports:
+            - "9443:9443"
+            - "9763:9763"
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "curl",
+                    "-k",
+                    "-f",
+                    "https://localhost:9443/oauth2/token/.well-known/openid-configuration",
+                ]
+            interval: 1m30s
+            timeout: 30s
+            retries: 5
+            start_period: 30s
+        volumes:
+            - ./conf/identity-server:/home/wso2carbon/wso2-config-volume
+        networks:
+            - wso2_network
